@@ -27,10 +27,11 @@ var testParameters = &Parameters{
 }
 
 var testParametersRemove = &Parameters{
-	Force:      true,
-	ForceSleep: 3,
-	Quiet:      true,
-	NoDryRun:   true,
+	Force:             true,
+	ForceSleep:        3,
+	Quiet:             true,
+	NoDryRun:          true,
+	MaxFailureRetries: 6,
 }
 
 var testParametersGroups = &Parameters{
