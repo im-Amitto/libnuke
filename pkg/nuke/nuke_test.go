@@ -27,10 +27,11 @@ var testParameters = &Parameters{
 }
 
 var testParametersRemove = &Parameters{
-	Force:      true,
-	ForceSleep: 3,
-	Quiet:      true,
-	NoDryRun:   true,
+	Force:             true,
+	ForceSleep:        3,
+	Quiet:             true,
+	NoDryRun:          true,
+	MaxFailureRetries: 6,
 }
 
 var testParametersGroups = &Parameters{
@@ -55,7 +56,7 @@ func Test_Nuke_Version(t *testing.T) {
 				return
 			}
 
-			if e.Caller.Line == 351 {
+			if e.Caller.Line == 352 {
 				assert.Equal(t, "1.0.0-test", e.Message)
 				assertions++
 			}

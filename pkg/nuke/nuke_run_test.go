@@ -245,6 +245,7 @@ func Test_Nuke_Run_Failure(t *testing.T) {
 
 	assert.Equal(t, 1, n.Queue.Count(queue.ItemStateFinished))
 	assert.Equal(t, 1, n.Queue.Count(queue.ItemStateFailed))
+	assert.Equal(t, testParametersRemove.MaxFailureRetries, n.failedCount)
 }
 
 var testParametersMaxWaitRetries = &Parameters{

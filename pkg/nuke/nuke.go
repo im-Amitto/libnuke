@@ -28,11 +28,12 @@ type ListCache map[string]map[string][]resource.Resource
 
 // Parameters is a collection of common variables used to configure the before of the Nuke instance.
 type Parameters struct {
-	NoDryRun       bool // NoDryRun instructs Run to actually perform the remove function
-	Force          bool // Force instructs Run to proceed without confirmation from user
-	ForceSleep     int  // ForceSleep indicates how long of a delay before proceeding with confirmation
-	Quiet          bool // Quiet will hide resources if they have been filtered
-	MaxWaitRetries int  // MaxWaitRetries is the total number of times a resource will be retried during wait state
+	NoDryRun          bool // NoDryRun instructs Run to actually perform the remove function
+	Force             bool // Force instructs Run to proceed without confirmation from user
+	ForceSleep        int  // ForceSleep indicates how long of a delay before proceeding with confirmation
+	Quiet             bool // Quiet will hide resources if they have been filtered
+	MaxWaitRetries    int  // MaxWaitRetries is the total number of times a resource will be retried during wait state
+	MaxFailureRetries int  // MaxFailureRetries is the total number of times a resource will be retried during failure state
 
 	// WaitOnDependencies controls whether resources will be removed after their dependencies. It is important to note
 	// that it does not currently track direct dependencies but instead dependent resources. For example if ResourceA
@@ -253,8 +254,8 @@ func (n *Nuke) handleFailure() error {
 	// if there are no resources being processed and there are resources in the failed state, then we enter this
 	// loop to determine how many times we've tried the failed resources
 	if processingCount == 0 && failedCount > 0 {
-		// if failCount is greater than 2, then we are done, print status and return failed error
-		if n.failedCount >= 2 {
+		// if failCount is greater than max failure retries, then we are done, print status and return failed error
+		if n.failedCount >= n.Parameters.MaxFailureRetries {
 			printLog.Errorf("There are resources in failed state, but none are ready for deletion, anymore.")
 
 			for _, item := range n.Queue.GetItems() {
@@ -355,6 +356,11 @@ func (n *Nuke) Version() {
 func (n *Nuke) Validate() error {
 	if n.Parameters.ForceSleep < 3 {
 		return fmt.Errorf("value for --force-sleep cannot be less than 3 seconds. This is for your own protection")
+	}
+
+	// set a default of 3 for max failure retries
+	if n.Parameters.MaxFailureRetries == 0 {
+		n.Parameters.MaxFailureRetries = 3
 	}
 
 	if err := n.Filters.Validate(); err != nil {
