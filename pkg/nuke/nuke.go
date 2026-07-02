@@ -209,7 +209,7 @@ func (n *Nuke) Run(ctx context.Context) error {
 		return err
 	}
 
-	if n.Queue.Count(queue.ItemStateNew) == 0 {
+	if n.Queue.Count(queue.ItemStateNew, queue.ItemStateNewDependency) == 0 {
 		printLog.Info("No resource to delete.")
 		return nil
 	}

@@ -183,7 +183,7 @@ func (i *Item) Print() {
 	case ItemStateWaiting:
 		itemLog.Info("waiting for removal")
 	case ItemStateFailed:
-		itemLog.Info("failed")
+		itemLog.Infof("failed: %s", i.Reason)
 	case ItemStateFiltered:
 		itemLog.Infof("filtered: %s", i.Reason)
 	case ItemStateFinished:
